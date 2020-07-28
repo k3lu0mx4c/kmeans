@@ -9,6 +9,8 @@
 	linkcolor=black,
 	urlcolor=blue
 }
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
 \usepackage[top=2cm, bottom=2cm, left = 3cm, right = 2cm]{geometry}
 \usepackage{graphicx}
 \usepackage{multirow}
@@ -47,67 +49,175 @@
 \title{Tìm hiểu về thuật toán K-Means} 
 \author{Nguyễn Văn Huy \& Lê Duy An} 
 \begin{document}
-	\maketitle{} 
-	\newpage
-	\tableofcontents
-	\newpage
-	
-	\section{Giới thiệu} % (fold)
-	\label{sec:giới_thiệu}
-	
-	% section giới_thiệu (end)
-	\section{Phân tích toán học} % (fold)
-	\label{sec:phân_tích_toán_học}
-	Với dữ liệu đầu vào của thuật toán là tập hợp các điểm dữ liệu $\mathbf{X} = [\mathbf{x}_1,\mathbf{x}_2,\mathbf{x}_3,...,\mathbf{x}_N]$ $\in \mathds{R}^{d\times N}$ với $\mathbf{x}_i$ (có $d$ phần tử) là một vector mang giá trị của mỗi điểm, $N$ là số lượng các vector và số lượng $K$ các nhóm cần phân loại từ các điểm dữ liệu đó với $K < N$ (vì số lượng nhóm cần phân loại không được lớn hơn số lượng các phần tử). Điều mà chúng ta cần phải làm là làm thế nào để xác định các điểm thuộc về nhóm nào một cách gắn kết nhất, ở đây để cho dễ gọi và tính toán thì chúng ta cho rằng $K$ nhóm cần phần loại được gọi là nhóm $1,2,3,..K$. Trong phần này chúng ta chỉ đề cập đến bài toán chỉ có một điểm dữ liệu thuộc vào một nhóm duy nhất.\par
-	Ban đầu chúng ta phải có được các điểm gốc ban đầu của các nhóm có thể chọn $k$ điểm bất kì hoặc có thể lấy các điểm dữ liệu có sẵn trong tập dữ liệu ban đầu. Gọi các điểm gốc ban đầu là $\mathbf{m} = [\mathbf{m}_1,\mathbf{m}_2,\mathbf{m}_3,...,\mathbf{m}_K]$ với mỗi điểm $\mathbf{m}_k$ cũng có có $d$ các giá trị tương tự như các điểm dữ liệu $\mathbf{x}_i$. Dựa vào tập các điểm gốc $\mathbf{m}_k$ chúng ta phải xác định xem điểm $\mathbf{x}_i$ thuộc vào nhóm nào và gán nhãn cho các điểm đó bằng vector $\mathbf{y}$ có dạng:
-	% \begin{center}
-	$$\mathbf{y}_{ij} \in \{0,1\},\ \forall i,j;\ \  \sum_{j = 1}^{K} = 1,\  \forall i$$
-	% \end{center}
-	Trong đó $\mathbf{y}_{ij} = 0$ và $\mathbf{y}_{ik} = 1$, nghĩa là vector $\mathbf{y}$ có $K$ giá trị và vị trí ở vị trí $k$ có giá trị bằng 1 thì đồng nghĩa là vector $\mathbf{x}_i$ được gán vào nhóm $k$. Tập hợp các nhãn là $\mathbf{Y} = [\mathbf{y}_1,\mathbf{y}_2,\mathbf{y}_3,...,\mathbf{y}_N]$ $\in \mathds{R}^{K\times N}$.\par
-	Một ví dụ để hình dung rõ hơn về các tập dữ liệu. Ví dụ đề cập đến việc phân nhóm các điểm của tập $\mathbf{X} = [\mathbf{x}_1,\mathbf{x}_2,\mathbf{x}_3,...,\mathbf{x}_N]$ được biễu diễn trong Bảng \ref{tab:tbexample} nằm trong  không gian $2\mathds{D}$ gồm có số lượng các điểm là $N = 20$ được biểu diễn trong Hình \ref{fig:example1} bằng các điểm màu xanh, vì trong không gian $2\mathds{D}$ nên $d = 2$ tương ứng là tọa độ $x$ và $y$. Điều kiện của bài toán là các điểm đó thành ba cụm với ba điểm ban đầu là $\mathbf{m} = [(1;17),(3;4),(5;15)]$ có $K = 3$ được biểu thị bằng các điểm màu đỏ trên Hình \ref{fig:example1}.	
+\maketitle{} 
+\newpage
+\tableofcontents
+\newpage
+
+\section{Giới thiệu} % (fold)
+\label{sec:giới_thiệu}
+
+% section giới_thiệu (end)
+\section{Phân tích toán học} % (fold)
+\label{sec:phân_tích_toán_học}
+Với dữ liệu đầu vào của thuật toán là tập hợp các điểm dữ liệu $\mathbf{X} = [\mathbf{x}_1,\mathbf{x}_2,\mathbf{x}_3,...,\mathbf{x}_N]$ $\in \mathds{R}^{d\times N}$ với $\mathbf{x}_i$ (có $d$ phần tử) là một vector mang giá trị của mỗi điểm, $N$ là số lượng các vector và số lượng $K$ các nhóm cần phân loại từ các điểm dữ liệu đó với $K < N$ (vì số lượng nhóm cần phân loại không được lớn hơn số lượng các phần tử). Điều mà chúng ta cần phải làm là làm thế nào để xác định các điểm thuộc về nhóm nào một cách gắn kết nhất, ở đây để cho dễ gọi và tính toán thì chúng ta cho rằng $K$ nhóm cần phần loại được gọi là nhóm $1,2,3,..K$. Trong phần này chúng ta chỉ đề cập đến bài toán chỉ có một điểm dữ liệu thuộc vào một nhóm duy nhất.
+\\
+Ban đầu chúng ta phải có được các điểm gốc ban đầu của các nhóm có thể chọn $k$ điểm bất kì hoặc có thể lấy các điểm dữ liệu có sẵn trong tập dữ liệu ban đầu. Gọi các điểm gốc ban đầu là $\mathbf{m} = [\mathbf{m}_1,\mathbf{m}_2,\mathbf{m}_3,...,\mathbf{m}_K]$ với mỗi điểm $\mathbf{m}_k$ cũng có có $d$ các giá trị tương tự như các điểm dữ liệu $\mathbf{x}_i$. Dựa vào tập các điểm gốc $\mathbf{m}_k$ chúng ta phải xác định xem điểm $\mathbf{x}_i$ thuộc vào nhóm nào và gán nhãn cho các điểm đó bằng vector $\mathbf{y}$ có dạng:
+% \begin{center}
+$$\mathbf{y}_{ij} \in \{0,1\},\ \forall i,j;\ \  \sum_{j = 1}^{K} = 1,\  \forall i$$
+% \end{center}
+Trong đó $\mathbf{y}_{ij} = 0$ và $\mathbf{y}_{ik} = 1$, nghĩa là vector $\mathbf{y}$ có $K$ giá trị và vị trí ở vị trí $k$ có giá trị bằng 1 thì đồng nghĩa là vector $\mathbf{x}_i$ được gán vào nhóm $k$. Tập hợp các nhãn là $\mathbf{Y} = [\mathbf{y}_1,\mathbf{y}_2,\mathbf{y}_3,...,\mathbf{y}_N]$ $\in \mathds{R}^{K\times N}$.
+% \\
+% $$
+\\ 
+Một ví dụ để hình dung rõ hơn về các tập dữ liệu. Ví dụ đề cập đến việc phân nhóm các điểm của tập $\mathbf{X} = [\mathbf{x}_1,\mathbf{x}_2,\mathbf{x}_3,...,\mathbf{x}_N]$ được biễu diễn trong Bảng \ref{tab:tbexample} nằm trong  không gian $2\mathds{D}$ gồm có số lượng các điểm là $N = 20$ được biểu diễn trong Hình \ref{fig:example1} bằng các điểm màu xanh, vì trong không gian $2\mathds{D}$ nên $d = 2$ tương ứng là tọa độ $x$ và $y$. Điều kiện của bài toán là các điểm đó thành ba cụm với ba điểm ban đầu là $\mathbf{m} = [(1;17),(3;4),(5;15)]$ có $K = 3$ được biểu thị bằng các điểm màu đỏ trên Hình \ref{fig:example1}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{img/img_example}
+    \caption{Hình các các dữ liệu đầu vào.}
+    \label{fig:example1}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+$\mathbf{X}$                       & $x$                      & $y$                       \\ \hline
+$\mathbf{x}_1$                       & 1                      & 4                       \\ \hline
+$\mathbf{x}_2$                       & 5                      & 12                      \\ \hline
+$\mathbf{x}_3$                       & 2                      & 18                      \\ \hline
+...                       & ...                      & ...                      \\ \hline
+\multicolumn{1}{|l|}{$\mathbf{x}_N$}   & \multicolumn{1}{l|}{5} & \multicolumn{1}{l|}{13} \\ \hline
+% ...                     &                        &                         \\ \hline
+\end{tabular}
+\caption{Bảng biểu diễn một vài giá trị của các điểm trong tập $\mathbf{X}$}
+\label{tab:tbexample}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$\mathbf{Y}$                           & 1                      & 2                       & 3                       \\ \hline
+$\mathbf{y}_1$                         & 0                      & 0                       & 1                       \\ \hline
+$\mathbf{y}_2$                         & 1                      & 0                       & 0                       \\ \hline
+$\mathbf{y}_3$                         & 0                      & 1                       & 0                       \\ \hline
+...                                    & ...                    & ...                     & ...                     \\ \hline
+\multicolumn{1}{|l|}{$\mathbf{y}_N$}   & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0}  & \multicolumn{1}{l|}{1}  \\ \hline
+% ...                     &                        &                         \\ \hline
+\end{tabular}
+\caption{Bảng biểu diễn mội vài nhãn $\mathbf{y}_i$ trong tập $\mathbf{Y}$}
+\label{tab:tbexample}
+\end{table}
+
+\newpage
+\subsection{Hàm mất mát và bài toán tối ưu} % (fold)
+\label{sub:hàm_mất_mát_và_bài_toán_tối_ưu}
+
+% subsection hàm_mất_mát_và_bài_toán_tối_ưu (end)
+\subsection{Thuật toán tối ưu hàm mất mát} % (fold)
+\label{sub:thuật_toán_tối_ưu_hàm_mất_mát}
+
+% subsection thuật_toán_tối_ưu_hàm_mất_mát (end)
+% section phân_tích_toán_học (end)
+\newpage
+\section{Ưu và nhược điểm.} % (fold)
+\label{sec:ưu_và_nhược_điểm_}
+\subsection{Ưu điểm}
+\begin{itemize}
+	\item Thuật toán đơn giản, hiệu quả với độ phức tạo là $O(tKn)$, t, k << n, với:
+	\item[--]t: số lần lặp
+	\item[--]K: số cluster
+	\item[--]n: số mẫu
+	\item Sử dụng được với bộ số liệu lớn
+\end{itemize}
+\subsection{Nhược điểm}
+\begin{itemize}
+	\item Cần phải xác định trước số lượng cluster. Trong thực tế, cần phải sử dụng thêm một số biện pháp giúp xác định giá trị K, chẳng hạn như phương pháp Elbow.
+	\item Thuật toán KMeans không đảm bảo tìm được nghiệm tối ưu toàn cục nên nghiệm cuối cùng phụ thuộc rất nhiều vào các centroid ban đầu. Hình 3.1 thể hiện các kết quả khác nhau khi các centroid khởi tạo khác nhau. Ngoài ra, việc chọn các centroid cũng ảnh hưởng đến hiệu suất làm việc của thuật toán. Với cùng một kết quả tối ưu như nhau, số lần chạy ở hình 2 lớn gần gấp đôi so với hình 1.\\
 	\begin{figure}[h]
 		\centering
-		\includegraphics[width=0.5\linewidth]{img/img_example}
-		\caption{Hình các các dữ liệu đầu vào.}
-		\label{fig:example1}
+		\includegraphics[width=0.7\linewidth]{img/disad_1}
+		\label{dis1}
+		\caption{Các nghiệm khác nhau do khởi tạo ban đầu khác nhau}
 	\end{figure}
-	\begin{table}[h]
+	\item Các cluster cần phải có số lượng điểm gần bằng nhau. Ở hình 3.2 minh hoạ kết quả thuật toán KMeans với bộ dữ liệu có các cluster có số điểm chênh lệch. Trong trường hợp này, nhiều điểm đáng lẽ thuộc vào cụm xanh lam đã bị nhầm vào cụm xanh lục.\par
+	\begin{figure}[h]
 		\centering
-		\begin{tabular}{|c|c|c|}
-			\hline
-			$\mathbf{X}$                       & $x$                      & $y$                       \\ \hline
-			$\mathbf{x}_1$                       & 1                      & 4                       \\ \hline
-			$\mathbf{x}_2$                       & 5                      & 12                      \\ \hline
-			$\mathbf{x}_3$                       & 2                      & 18                      \\ \hline
-			...                       & ...                      & ...                      \\ \hline
-			\multicolumn{1}{|l|}{$\mathbf{x}_N$}   & \multicolumn{1}{l|}{5} & \multicolumn{1}{l|}{13} \\ \hline
-			% ...                     &                        &                         \\ \hline
-		\end{tabular}
-		\caption{Bảng biểu diễn một vài giá trị của các điểm trong tập $\mathbf{X}$}
-		\label{tab:tbexample}
-	\end{table}
-\begin{table}[h]
+		\includegraphics[width=0.3\linewidth]{img/disad_2}
+		\caption{Các nghiệm trong cluster này bị nhầm vào cluster khác}
+	\end{figure}\par
+	\item Các cluster cần có dạng hình tròn (cầu), nếu không thì KMeans sẽ hoạt động không hiệu quả. Lý do chính là vì Kmeans quyết định cluster của một điểm dữ liệu thông qua khoảng cách của nó đến centroid.	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.3\linewidth]{img/disad_3}
+		\caption{Các nghiệm trong cluster này bị nhầm vào cluster khác}
+	\end{figure}
+	\item Centroid có thể bị xê dịch bởi các ngoại lệ, hoặc các ngoại lệ có thể có cụm riêng thay vì bị bỏ qua.
+	\item Cho kết quả sai khi một cluster này bị bao bọc bằng một cluster khác. Hình 3.3 là một minh hoạ điển hình cho việc KMeans không thể phân cụm dữ liệu. Một cách tự nhiên, chúng ta chia hình mặt thành 4 cụm: mắt trái, mắt phải, miệng, hình bao quanh mặt. Nhưng vì các bộ phận mắt, miệng nằm bên trong mặt nên KMeans phân cụm không chính xác.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\linewidth]{img/disad_4}
+		\caption{KMeans phân cụm hình mặt không chính xác}
+	\end{figure}	
+\end{itemize}
+\section{Cách tìm K cụm tối ưu nhất}
+Xác định số lượng cụm tối ưu trong một tập dữ liệu là vấn đề cơ bản trong phân cụm Kmeans, yêu cầu người dùng chỉ định số lượng cụm k được tạo. Ý tưởng đằng sau Kmeans bao gồm xác định các cụm k sao cho tổng biến thể trong cụm là tối thiểu. Đây được xem là một nhược điểm của thuật toán này. Phần dưới đây trình bày một vài phương pháp giúp xác định số cụm k hợp lý nhất.\par
+\subsection{Thuật toán Elbow}
+Tư tưởng chính của phương pháp phân cụm phân hoạch (như KMeans) là định nghĩa 1 cụm sao cho tổng bình phương khoảng cách của tất cả các điểm đến đến trung tâm cụm là nhỏ nhất, tham số này là WSS (Within-cluster Sum of Square). Elbow method chọn số cụm k sao cho khi thêm vào  một cụm khác thì không làm cho WSS thay đổi nhiều.\par
+\newpage
+Quy trình triển khai thuật toán Elbow:
+\begin{itemize}
+	\item Thực hiện phân cụm với số cụm thay đổi
+	\item Với mỗi giá trị k, tính giá trị WSS
+	\item Vẽ đường cong Elbow theo các giá trị k
+	\item Dựa vào đường cong Elbow chọn số k thích hợp, là vị trí ở khúc cua 
+\end{itemize}
+Xét ví dụ mẫu dữ liệu sau:
+\begin{figure}[h]
 	\centering
-	\begin{tabular}{|c|c|c|c|}
-		\hline
-		$\mathbf{Y}$                           & 1                      & 2                       & 3                       \\ \hline
-		$\mathbf{y}_1$                         & 0                      & 0                       & 1                       \\ \hline
-		$\mathbf{y}_2$                         & 1                      & 0                       & 0                       \\ \hline
-		$\mathbf{y}_3$                         & 0                      & 1                       & 0                       \\ \hline
-		...                                    & ...                    & ...                     & ...                     \\ \hline
-		\multicolumn{1}{|l|}{$\mathbf{y}_N$}   & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{0}  & \multicolumn{1}{l|}{1}  \\ \hline
-		% ...                     &                        &                         \\ \hline
-	\end{tabular}
-	\caption{Bảng biểu diễn mội vài nhãn $\mathbf{y}_i$ trong tập $\mathbf{Y}$}
-	\label{tab:tbexample}
-	\end{table}
-	\newpage
-	\subsection{Hàm mất mát và bài toán tối ưu}
-	\subsection{Thuật toán tối ưu hàm mất mát}
-	\newpage
-	\section{Ưu và nhược điểm của Kmeans} % (fold)a
-	\input{ad_disad}
-	\newpage
-	\section{Cách tìm K cụm tối ưu nhất}
-	\input{optimal_k}
+	\includegraphics[width=0.5\linewidth]{img/data_set_1}
+	\caption{Mẫu dữ liệu}
+\end{figure}\par
+Tính toán giá trị WSS tương ứng với K từ 1 đến 20, ta thu được biểu đồ sau:
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{img/data_set_2}
+	\caption{WSS tương ứng với k từ 1 đến 20}
+\end{figure}\par
+Ta chọn k = 3 làm số cụm cho mẫu dữ liệu trên.
+\newpage
+\subsection{Thuật toán Average Silhouette}
+Average silhouette dùng để đo chất lượng của một cụm. Giá trị Silhouette s(i) cho mỗi điểm dữ liệu i được xác định như sau:\\
+\begin{center}
+	\large
+	$s(i) = \frac{b(i) - a(i)}{max\{a(i), b(i)\}} (|C_i| > 1)$
+\end{center}\par
+Trong đó:
+\begin{itemize}
+	\item a(i) khoảng cách trung bình từ điểm i đến các điểm khác trong cụm. $a(i) = \frac{1}{|C_i| - 1}\sum\limits_{j \in C_i, i \neq j}{d(i, j)}$
+	\item b(i) là khoảng cách trung bình giữa các cụm. $b(i) = \underset{i \neq j}{min} \frac{1}{|C_j|}\sum\limits_{j \in C_j}{d(i, j)}$
+\end{itemize}\par
+Với s(i) = 0 với những cụm có chỉ có 1 phần tử.\par
+\smallskip
+Quy trình triển khai thuật toán average silhouette:
+\begin{itemize}
+	\item Thực hiện phân cụm với số cụm thay đổi
+	\item Với mỗi giá trị k, tính giá trị average silhouette
+	\item Vẽ đường cong average silhouette theo các giá trị k
+	\item Vị trí có average silhouette lớn nhất là số cụm cần tìm
+\end{itemize}
+Xét ví dụ về mẫu dữ liệu sau:
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\linewidth]{img/data_set_3}
+	\caption{Mẫu dữ liệu}
+\end{figure}\par
+Vẽ đường cong average silhouette:\par
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\linewidth]{img/data_set_4}
+\end{figure}\par
+Ta chọn k = 3 làm số cụm cho mẫu dữ liệu trên.
 \end{document}
