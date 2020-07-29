@@ -49,6 +49,7 @@
 {language=Python}
 \title{Tìm hiểu về thuật toán K-Means} 
 \author{Nguyễn Văn Huy \& Lê Duy An} 
+\date{Tháng 7, 2020}
 \begin{document}
 	\maketitle{} 
 	\newpage
@@ -77,13 +78,14 @@
 	Xem xét ví dụ về các phân cụm dữ liệu như hình trên, ta quan sát được mỗi cụm có một điểm màu vàng gọi là điểm trung tâm (centroid), các điểm dữ liệu nằm gần điểm trung tâm nào nhất thì thuộc cùng một nhóm với điểm trung tâm đó. Như vậy, từ một bộ dữ liệu ban đầu, ta đã phân thành 3 cụm dữ liệu, mỗi cụm bao gồm các điểm dữ liệu có tính chất tương tự nhau.
 	\newpage
 	\section{Phân tích toán học} % (fold)
+	\subsection{Phân tích toán học}
 	\label{sec:phân_tích_toán_học}
 	Với dữ liệu đầu vào của thuật toán là tập hợp các điểm dữ liệu $\mathbf{X} = [\mathbf{x}_1,\mathbf{x}_2,\mathbf{x}_3,...,\mathbf{x}_N]$ $\in \mathds{R}^{d\times N}$ với $\mathbf{x}_i$ (có $d$ phần tử) là một vector mang giá trị của mỗi điểm, $N$ là số lượng các vector và số lượng $K$ các nhóm cần phân loại từ các điểm dữ liệu đó với $K < N$ (vì số lượng nhóm cần phân loại không được lớn hơn số lượng các phần tử). Điều mà chúng ta cần phải làm là làm thế nào để xác định các điểm thuộc về nhóm nào một cách gắn kết nhất, ở đây để cho dễ gọi và tính toán thì chúng ta cho rằng $K$ nhóm cần phần loại được gọi là nhóm $1,2,3,..K$. Trong phần này chúng ta chỉ đề cập đến bài toán chỉ có một điểm dữ liệu thuộc vào một nhóm duy nhất.
 	\\
 	Ban đầu chúng ta phải có được các điểm gốc ban đầu của các nhóm có thể chọn $k$ điểm bất kì hoặc có thể lấy các điểm dữ liệu có sẵn trong tập dữ liệu ban đầu. Gọi các điểm gốc ban đầu là $\mathbf{m} = [\mathbf{m}_1,\mathbf{m}_2,\mathbf{m}_3,...,\mathbf{m}_K]$ với mỗi điểm $\mathbf{m}_k$ cũng có có $d$ các giá trị tương tự như các điểm dữ liệu $\mathbf{x}_i$. Dựa vào tập các điểm gốc $\mathbf{m}_k$ chúng ta phải xác định xem điểm $\mathbf{x}_i$ thuộc vào nhóm nào và gán nhãn cho các điểm đó bằng vector $\mathbf{y}$ có dạng:
-	% \begin{center}
-	$$\mathbf{y}_{ij} \in \{0,1\},\ \forall i,j;\ \  \sum_{j = 1}^{K} = 1,\  \forall i$$
-	% \end{center}
+	\begin{center}
+	$\mathbf{y}_{ij} \in \{0,1\},\ \forall i,j;\ \  \sum_{j = 1}^{K} = 1,\  \forall i$ \qquad (1)
+	\end{center}\par
 	Trong đó $\mathbf{y}_{ij} = 0$ và $\mathbf{y}_{ik} = 1$, nghĩa là vector $\mathbf{y}$ có $K$ giá trị và vị trí ở vị trí $k$ có giá trị bằng 1 thì đồng nghĩa là vector $\mathbf{x}_i$ được gán vào nhóm $k$. Tập hợp các nhãn là $\mathbf{Y} = [\mathbf{y}_1,\mathbf{y}_2,\mathbf{y}_3,...,\mathbf{y}_N]$ $\in \mathds{R}^{K\times N}$.
 	% \\
 	% $$
@@ -129,11 +131,18 @@
 	\end{table}\par
 	\newpage
 	\subsection{Hàm mất mát và bài toán tối ưu} % (fold)
-	Nếu gọi $m_k \in \mathbb{R}^d$ là centroid của mỗi cluster và thay thế tất cả các điểm được phân vào cluster này bởi $m_k$, một điểm dữ liệu $x_i$ được phân vào cluster k sẽ bị sai số là $x_i - m_k$. CHúng ta mong muốn vector sai số này gần với vector không, tức $x_i$ gần với $m_k$. Một đại lượng đơn giản giúp đo khoảng cách giữa hai điểm là khoảng cách Euclid $||x_i - m_k||^2_2$. Hơn nữa, vì $x_i$ được phân vào cluster k nên $y_{ik} = 1, y_{ij} = 0, \forall j \neq k}$. Khi đó, biểu thức khoảng cách Euclid có thể được viết lại thành\par
+	Nếu gọi $m_k \in \mathbb{R}^d$ là entroid của mỗi cluster và thay thế tất cả các điểm được phân vào cluster này bởi $m_k$, một điểm dữ liệu $x_i$ được phân vào cluster k sẽ bị sai số là $x_i - m_k$. Chúng ta mong muốn vector sai số này gần với vector không, tức $x_i$ gần với $m_k$. Một đại lượng đơn giản giúp đo khoảng cách giữa hai điểm là khoảng cách Euclid $||x_i - m_k||^2_2$. Hơn nữa, vì $x_i$ được phân vào cluster k nên $y_{ik} = 1, y_{ij} = 0, \forall j \neq k$. Khi đó, biểu thức khoảng cách Euclid có thể được viết lại thành\par
 	\begin{center}
 		$||x_i - m_k||^2_2 = y_{ik}||x_i - m_k||^2_2 = \sum\limits^K_{j = 1}{y_{ij}||x_i - m_k||^2_2}$
+	\end{center}\par
+	Như vậy, sai số trung bình cho toàn bộ dữ liệu sẽ là:\par
+	\begin{center}
+		$L (Y,M) = \frac{1}{N}\sum\limits^N_{i=1}\sum\limits_{j = 1}^K{y_{ij}||x_i - m_k||^2_2}$
 	\end{center}
-	\subsection{Thuật toán tối ưu hàm mất mát}
+	Trong đó, $M = [m_1, m_2,..., m_K] \in \mathbb{R}^{d \text{x} K}$ là ma trận tạo bở K centroid. Hàm mất mát trong bài toán KMeans là $L(Y, M)$ với ràng buộc ở (1). Tóm lại, bài toán cần tối ưu là:
+	\begin{center}
+		Y, M = $\underset{Y, M}{argmin}\frac{1}{N}\sum\limits^N_{i=1}\sum\limits_{j = 1}^K{y_{ij}||x_i - m_k||^2_2}$
+	\end{center}
 	\newpage
 	\section{Ưu và nhược điểm} % (fold)
 	\subsection{Ưu điểm}
