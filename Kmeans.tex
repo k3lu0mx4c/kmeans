@@ -56,7 +56,27 @@
 
 \section{Giới thiệu} % (fold)
 \label{sec:giới_thiệu}
-
+Phân cụm là kỹ thuật rất quan trọng trong việc khai thác dữ liệu. Phân cụm là các quy trình tìm cách nhóm các đối tượng đã cho vào các cụm (clusters), sao cho các đối tượng trong cùng 1 cụm thoả mãn các tính chất tương tự nhau và các đối tượng khác cụm thì không tương tự nhau.\par
+\smallskip
+Kỹ thuật phân cụm có thể được áp dụng trong đa dạng các lĩnh vực khác nhau như:
+\begin{itemize}
+	\item Marketing: Xác định các nhóm khách hàng dựa trên sở thích, thói quen mua sắm,...
+	\item Sinh học: Phận nhóm động vật và thực vật dựa vào các thuộc tính của chúng,...
+	\item Quản lý thư viện: Theo dõi độc giả, sách, dự đoán nhu cầu của độc giả,...
+	\item Giao thông: tìm nhóm đường có tốc độ giống nhau,...
+	\item ...
+\end{itemize}
+Phương pháp k-means là một trong số những thuật toán phân cụm (clustering). Với đầu vào tập dữ liệu cần phân cụm và số cụm (cluster), đầu ra chúng ta sẽ được kết quả dữ liệu đã được phân về các cluster.\par
+\smallskip
+Trong thuật toán K-means clustering, chúng ta không biết nhãn (label) của từng điểm dữ liệu. Mục đích là làm thể nào để phân dữ liệu thành các cụm (cluster) khác nhau sao cho dữ liệu trong cùng một cụm có tính chất giống nhau.\par
+\smallskip
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{img/cluster_ex}
+	\caption{Ví dụ về bài toán phân cụm dữ liệu}
+\end{figure}\par
+Xem xét ví dụ về các phân cụm dữ liệu như hình trên, ta quan sát được mỗi cụm có một điểm màu vàng gọi là điểm trung tâm (centroid), các điểm dữ liệu nằm gần điểm trung tâm nào nhất thì thuộc cùng một nhóm với điểm trung tâm đó. Như vậy, từ một bộ dữ liệu ban đầu, ta đã phân thành 3 cụm dữ liệu, mỗi cụm bao gồm các điểm dữ liệu có tính chất tương tự nhau.
+\newpage
 % section giới_thiệu (end)
 \section{Phân tích toán học} % (fold)
 \label{sec:phân_tích_toán_học}
