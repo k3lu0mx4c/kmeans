@@ -247,6 +247,72 @@ Chúng ta có thể hình dung thuật toán bằng các hình dưới đây v�
 	Vì bài toán trên là bài toán mẫu nên khá đơn giản để tối ưu hóa độ lỗi trung bình. Đối với các bài toán lớn cần phải thiết lập thêm điều kiện để đừng các bài toán tránh trường hợp lặp vô hạn. Ngoài ra cần phải chú ý thêm số $K$ cụm và các điểm trung tâm của các cụm $\mathbf{M}$, các vấn đề đó sẽ được trình bài sau.
 	% subsection tóm_tắt_thuật_toán (end)
 	\newpage
+	\subsection{Ví dụ phân cụm dữ liệu}
+	Ta xét mẫu dữ liệu đầu vào gồm 8 điểm dưới đây, với tọa độ các điểm được cho như sau:
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/ex_1}
+			\caption{Ví dụ mẫu dữ liệu đầu vào}
+		\end{figure}\par
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+			\hline
+			Điểm & A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 \\
+			\hline
+			Tọa độ & (1,2) & (2,1) & (1,1) & (4,3) & (1,4) & (4,4) & (6,3) & (2.5,3.5) \\
+			\hline
+		\end{tabular}\par
+		\caption{Tọa độ các điểm trong mẫu dữ liệu}
+	\end{table}
+	Giả sử ta chọn hai điểm A5 và A7 làm trung tâm của cụm, ta tính được khoảng cách của từng điểm trong mẫu đến hai điểm centroid.\par
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline
+			& A1 & A2 & A3 & A4 & A6 & A8 \\
+			\hline
+			A5 & 2 & 3.2 & 3 & 3.2 & 3 & 4.6 \\
+			\hline
+			A7 & 5.1 & 4.5 & 5.4 & 2 & 2.2 & 3.5 \\
+			\hline
+		\end{tabular}
+	\end{table}
+	\newpage
+	Khoảng cách từ một điểm đến đến centroid nào ngắn hơn thì sẽ thuộc cụm của centroid đó.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/ex_2}
+		\caption{Phân cụm dữ liệu lần 1}
+	\end{figure}\par
+	Ta tính được tọa độ điểm centroid của hai cụm dữ liệu sau khi phân cụm:\par
+	$C_1 = \left(\frac{1 + 2 + 1 + 1}{4}, \frac{4 + 2 + 1 + 1}{4}\right) = (1.25,2)$; $C_2 = \left(\frac{2.5+4+4+6}{4}, \frac{3.5+3+4+3}{4}\right) = (4.125,3.375)$\par
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/ex_3}
+		\caption{Tọa độ các điểm centroid}
+	\end{figure}\par
+	\newpage
+	Vì tọa độ của hai cụm centroid này khác với hai cụm đã đưa ra ban đầu, nên ta tiếp tục tính khoảng cách của các điểm dữ liệu đến centroid mới rồi tiến hành phân nhóm như lần 1.\par
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+			\hline
+			& A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 \\
+			\hline
+			C1 & 0.25 & 1.25 & 1.03 & 2.9 & 2.02 & 3.4 & 4.9 & 1.95 \\
+			\hline
+			C2 & 3.41 & 3.19 & 3.92 & 0.4 & 3.2 & 0.6 & 1.9 & 1.6 \\
+			\hline
+		\end{tabular}
+	\end{table}\par
+	Quan sát thấy được các phần tử trong một cụm không thay đổi, dẫn đến tọa độ các điểm centroid được giữ nguyên. Từ đó ta kết luận được đã phân cụm dữ liệu thành công với hai điểm centroid là $C_1(1.25,2)$; $C_2(4.125,3.375)$\par
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/ex_3}
+		\caption{Phân cụm hoàn tất mẫu dữ liệu}
+	\end{figure}\par
+	\newpage
 	\section{Ưu và nhược điểm} % (fold)
 	\subsection{Ưu điểm}
 	\begin{itemize}
