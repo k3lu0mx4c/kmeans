@@ -579,4 +579,112 @@ Chúng ta có thể hình dung thuật toán bằng các hình dưới đây v�
 	[7.86474658 2.96544294]]
 	\end{lstlisting}
 	Dễ thấy toạ độ các điểm centroid sau cùng gần như trùng khớp với 3 tâm cụm khởi tạo ban đầu là (2,2), (8,3) và (5,10).
+	\subsection{Trường hợp phân cụm sai} % (fold)
+	\label{sub:trường_hợp_phân_cụm_sai}
+	Theo như nhược điểm của thuật toán K-Means đã được nêu ở trên thì trong đó có một nhược điểm là các cluster cần có dạng hình tròn (cầu), nếu không thì K-Means sẽ hoạt động không hiệu quả. Do đó, chúng ta cùng thực nghiệm về vấn đề này bằng python, sử dụng tập dữ liệu của sklearn và hàm {\ttfamily{make\_moons}} để tạo ra tập dữ liệu có hai cụm hình dạng trăng lưỡi liềm và số lượng các vector là $N = 200$, được trình bày như dưới đây.
+	\begin{lstlisting}[style=myPythonStyle]
+	from sklearn.datasets import make_moons
+	X, y = make_moons(200, noise = 0.05, random_state = 0)
+	\end{lstlisting}
+	Hiển thị tập dữ liệu và thiết lập số nhóm $K = 2$.
+	\begin{lstlisting}[style=myPythonStyle]
+	plt.scatter(X[:,0], X[:,1], s = 50)
+	K = 2
+	\end{lstlisting}
+	\newpage
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/moons}
+		\caption{Tập dữ liệu không phải dạng tròn}
+	\end{figure}
+	Thực hiện phân cụm một cách bình thường với các hàm có ở phía trên.
+	\begin{lstlisting}[style=myPythonStyle]
+	init_centers = kmeans_init_centers(X, K)
+	print(init_centers)
+	init_labels = np.zeros(X.shape[0])
+	kmeans_visualize(X, init_centers, init_labels, K, 'Init centers in the first run. Assigned all data as cluster 0')
+	centers, labels, times = kmeans(init_centers, init_labels, X, K)
+	print('Kmeans has converged after', times, 'times')
+	print("Final centroid: ", centers)
+	\end{lstlisting}
+	Quá trình phân cụm được biểu thị bằng các sơ đồ dưới đây.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/moons1}
+		\caption{Thực hiện khởi tạo các điểm trung tâm}
+	\end{figure}
+	\newpage
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/moons2}
+		\caption{Phân cụm dữ liệu lần 1}
+	\end{figure}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/moons3}
+		\caption{Phân cụm dữ liệu lần 2}
+	\end{figure}
+	\newpage
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/moons4}
+		\caption{Phân cụm dữ liệu lần 3}
+	\end{figure}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/moons5}
+		\caption{Phân cụm dữ liệu lần 4}
+	\end{figure}
+	Như vậy chúng ta đã thấy được rằng, đối với các tập dữ liệu không có dạng hình tròn (ở trường hợp phía trên có dạng hình lưỡi liềm) thì thuật toán K\- means không còn chính xác nữa. Chúng ta có thể tham khảo phân loại đúng của tập dữ liệu trên thì nên được phân loại như sau.
+	\newpage 
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/truemoons}
+		\caption{Dạng phân cụm đúng của tập dữ liệu trên.}
+	\end{figure}
+	\subsection{Nén hình ảnh} % (fold)
+	\label{sub:nén_hình_ảnh}
+	Ngoài ra chúng ta có thể áp dụng thuật toán K-Means tách vật thể từ trong ảnh hoặc có thể dùng để nén ảnh và dữ liệu. Ở đây chúng ta sẽ bàn tới các sử dụng thuật toán K-means để nén ảnh. Trước tiên đi vào các khái niệm về ảnh, một ảnh là tập hợp $h\times w$ pixel, với mỗi pixel được gọi là các điểm ảnh mang 3 giá trị Red, Green và Blue, còn $h$ và $w$ lần lượt là chiều cao và chiều rộng của ảnh. Trong bài toán này chúng ta sẽ sử dụng thư viện có sẵn hỗ trợ thuật toán K-means là \texttt{sklearn}, chúng ta sẽ sử dụng hàm \texttt{KMeans} để phân cụm dữ liệu. Đầu tiên, thực hiện import thư viện và hình ảnh cần nén vào, ở đây sử dụng hình ảnh Vịnh Hạ Long (\url{https://en.wikipedia.org/wiki/H%E1%BA%A1_Long_Bay}).
+	\begin{lstlisting}[style=myPythonStyle]
+	import matplotlib.image as mpimg
+	import matplotlib.pyplot as plt
+	from sklearn.cluster import KMeans
+	img = mpimg.imread('halongbay.jpg')
+	plt.imshow(img)
+	\end{lstlisting}
+	Kết quả hiện thị trên màn hình.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/vhl}
+		\caption{Hình ảnh được thực hiện nén ảnh.}
+	\end{figure}
+	\newpage
+	Tiếp tục biến đổi bức ảnh thành một ma trận với mỗi dòng tương ứng với mỗi pixel để phù hợp với định dạng dữ liệu đầu vào. Bên cạnh đó, sử dụng một biến khác để lưu giá trị các pixel này để lưu giá trị ảnh sau khi được nén.
+	\begin{lstlisting}[style=myPythonStyle]
+	X = np.copy(img)
+	X = X.reshape(X.shape[0]*X.shape[1], 3)
+	\end{lstlisting}
+	Áp dụng hàm \texttt{KMeans} vào tập dữ liệu pixel với số màu chúng ta mong muốn còn lại là 3, tức là gom tất cả các màu của ảnh về còn lại 3 màu.
+	\begin{lstlisting}[style=myPythonStyle]
+	kmeans = KMeans(n_clusters = 3, random_state = 0)
+	labels = kmeans.fit_predict(X)
+	\end{lstlisting}
+	Sau khi đã thực hiện gom cụm các pixel, tiến hành thay thế các pixel thành các pixel mới tương ứng với điểm trung tâm của cụm và nó được gom vào, sau đó chuyển đổi tập dữ liệu về lại định dạng ban đầu.
+	\begin{lstlisting}[style=myPythonStyle]
+	for i in range(3):
+    X[labels==i] = kmeans.cluster_centers_[i]
+	X = X.reshape(img.shape[0],img.shape[1], 3)
+	plt.imshow(X)
+	\end{lstlisting}
+	Kết quả hình ảnh sau khi nén thu được.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/vhlcompress}
+		\caption{Hình ảnh sau khi được nén.}
+	\end{figure}
+
+
+	Hình ảnh sau khi được nén chỉ còn lại 3 màu, nên dung lượng của hình ảnh sẽ bị giảm đi đáng kể. Đáp ứng cho nhu cầu lưu trữ mà không cần quá cao về chất lượng hình ảnh, hoặc chỉ cần hình ảnh chất lượng thấp để tiết kiệm bộ nhớ.
+	% subsection nén_hình_ảnh (end)
+	% subsection trường_hợp_phân_cụm_sai (end)
 \end{document}
