@@ -433,13 +433,18 @@ Chúng ta có thể hình dung thuật toán bằng các hình dưới đây v�
 	\subsection{Thuật toán Elbow}
 	Tư tưởng chính của phương pháp phân cụm phân hoạch (như KMeans) là định nghĩa 1 cụm sao cho tổng bình phương khoảng cách của tất cả các điểm đến đến trung tâm cụm là nhỏ nhất, tham số này là WSS (Within-cluster Sum of Square). Elbow method chọn số cụm k sao cho khi thêm vào  một cụm khác thì không làm cho WSS thay đổi nhiều.\par
 	\newpage
+	Có thể hình dung “Elbow method” như sau, với những lần chạy khi giá trị \textbf{k = m} (nhỏ hơn sô cụm tối ưu là \textbf{k = k*}), các điểm thuộc vào m cụm có thể được phân cụm đúng, tuy nhiên với \textbf{k - m} cụm còn lại sẽ có những điểm dữ liệu bị gom cụm sai (vào các điểm center ở xa). Điều này dẫn đến việc hệ số TWSS lớn. Giá trị TWSS sẽ giảm nhanh chóng khi ta tăng số cụm lên, do các điểm trung tâm tìm được sẽ gần với các trung tâm cụm hơn. Khi số cụm đạt tối ưu, tất cả các cụm đều chọn được những điểm trung tâm chính xác, giúp làm giảm khoảng cách các điểm đến trung tâm cụm của nó, TWSS lúc này sẽ có giá trị rất nhỏ.\par
+	\medskip
+	Nếu ta tiếp tục tăng số cụm lên, lúc này hệ TWSS sẽ tiếp cũng giảm, tuy nhiên mức độ giảm sẽ rất nhỏ, thậm chí là không đáng kể. Vì khi này, các cụm điểm chuẩn sẽ tiếp tục được chia nhỏ ra, hay tức là mỗi cụm đó sẽ có thể có nhiều 2 điểm trung tâm, làm khoảng cách các điểm tới trung tâm mới càng nhỏ thêm. Trên biểu đồ ta sẽ thấy đường cong khi k qua giá trị tối ưu sẽ không có độ dốc nữa. Đặc biệt, nếu k được tăng đến bằng với số điểm dữ liệu, TWSS sẽ bằng không, việc phân cụm lúc này sẽ không còn mang ý nghĩa gì nữa.\par
+	\medskip
 	Quy trình triển khai thuật toán Elbow:
 	\begin{itemize}
 		\item Thực hiện phân cụm với số cụm thay đổi
 		\item Với mỗi giá trị k, tính giá trị WSS
 		\item Vẽ đường cong Elbow theo các giá trị k
-		\item Dựa vào đường cong Elbow chọn số k thích hợp, là vị trí ở khúc cua 
+		\item Dựa vào đường cong Elbow chọn số k ở vị trí đường cong
 	\end{itemize}
+	\newpage
 	Xét ví dụ mẫu dữ liệu sau:
 	\begin{figure}[h]
 		\centering
